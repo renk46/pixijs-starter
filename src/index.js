@@ -12,29 +12,49 @@ const app = new Application({
 const control = new Control(app)
 const utils = new Utils(app)
 
-// Load the logo
 const texture = Texture.from('assets/sun.png');
 
-const sun = new Sprite(texture);
-sun.anchor.set(0.5); // We want to rotate our sun relative to the center, so 0.5
-sun.scale.x = 0.05
-sun.scale.y = 0.05
-app.stage.addChild(sun);
+let planets = []
 
-const planet = new Sprite(texture);
-planet.anchor.set(0.5);
-planet.scale.x = 0.05
-planet.scale.y = 0.05
-app.stage.addChild(planet);
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
-// Position the sun at the center of the stage
-sun.x = app.screen.width * 0.5;
-sun.y = app.screen.height * 0.5;
+function getDistanceBetweenPoint(a, b) {
+  return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2))
+}
 
-planet.x = sun.x + 250;
-planet.y = sun.y;
+function getPositionWithoutNeibor(distance, planets) {
+  const x = getRandomArbitrary(-5000, 5000);
+  const y = getRandomArbitrary(-5000, 5000);
 
-for (let i = -50000; i < 50000; i = i + 100) {
+  let r = planets.find((e) => getDistanceBetweenPoint({x, y}, {x: e.x, y: e.y}) < distance)
+  if (r) {
+    return getPositionWithoutNeibor(distance, planets)
+  } else {
+    return {x, y}
+  }
+}
+
+for (let i = 0; i < 50; i++) {
+  const planet = new Sprite(texture);
+  planet.anchor.set(0.5);
+  planet.scale.x = 0.05
+  planet.scale.y = 0.05
+
+  const {x, y} = getPositionWithoutNeibor(500, planets)
+
+  planet.x = x
+  planet.y = y
+
+  planets.push(planet)
+
+  app.stage.addChild(planet);
+}
+
+
+
+for (let i = -50000; i < 50000; i += 100) {
   const text = new Text(i, {
     fontFamily: 'Arial',
     fontSize: 24,
@@ -46,7 +66,7 @@ for (let i = -50000; i < 50000; i = i + 100) {
   app.stage.addChild(text);
 }
 
-for (let i = -50000; i < 50000; i = i + 100) {
+for (let i = -50000; i < 50000; i += 100) {
   const text = new Text(i, {
     fontFamily: 'Arial',
     fontSize: 24,
@@ -58,14 +78,18 @@ for (let i = -50000; i < 50000; i = i + 100) {
   app.stage.addChild(text);
 }
 
+
+
 // Put the rotating function into the update loop
 app.ticker.add((delta) => {
-  sun.rotation += 0.002 * delta;
-
-  const angle = 0.002;
-  let posPlanet = utils.orbitPos(planet.x, planet.y, sun.x, sun.y, angle)
-  planet.x = posPlanet.x;
-  planet.y = posPlanet.y;
-
   document.getElementById("info").innerHTML = `${app.ticker.FPS.toFixed(2)} FPS`
 });
+
+let distance = document.getElementById("distance");
+distance.oninput = function() {
+  planets.forEach((e, i, arr) => {
+    const {x, y} = getPositionWithoutNeibor(this.value, planets)
+    e.x = x
+    e.y = y
+  })
+}

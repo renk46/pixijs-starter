@@ -14,11 +14,11 @@ export default function Control(app) {
         let worldPos = {x: (x - stage.x) / stage.scale.x, y: (y - stage.y) / stage.scale.y};
         let newScreenPos = {x: (worldPos.x) * newScale.x + stage.x, y: (worldPos.y) * newScale.y + stage.y};
 
-        app.stage.x -= (newScreenPos.x - x)
-        app.stage.y -= (newScreenPos.y - y)
+        stage.x -= (newScreenPos.x - x)
+        stage.y -= (newScreenPos.y - y)
 
-        app.stage.scale.x = newScale.x
-        app.stage.scale.y = newScale.y
+        stage.scale.x = newScale.x
+        stage.scale.y = newScale.y
     }
 
     app.view.addEventListener("wheel", function (e) {

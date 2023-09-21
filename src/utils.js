@@ -6,7 +6,12 @@ export default function Utils(app) {
         return {x, y}
     }
 
+    const drawCoords = (app) => {
+
+    }
+
     return {
-        orbitPos
+        orbitPos,
+        drawCoords
     }
 }
