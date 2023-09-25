@@ -1,11 +1,12 @@
+export default function Control(app, utils) {
+    let isMove = 0
 
-export default function Control(app) {
-    const zoom = (x, y, deltaY) => {
+    function zoom(x, y, deltaY) {
         let isZoomIn = deltaY < 0
         let direction = isZoomIn ? 1 : -1
         let factor = (1 + direction * 0.1)
 
-        const stage = app.stage
+        const { stage } = app
 
         const newScale = {x: stage.scale.x * factor, y: stage.scale.y * factor}
         newScale.x = newScale.x < 0 ? 0 : newScale.x
@@ -22,10 +23,8 @@ export default function Control(app) {
     }
 
     app.view.addEventListener("wheel", function (e) {
-        zoom(e.clientX, e.clientY, e.deltaY)
+        zoom(e.offsetX, e.offsetY, e.deltaY)
     });
-
-    let isMove = 0
     app.view.addEventListener("mousedown", function (e) {
         isMove = 1
     });
